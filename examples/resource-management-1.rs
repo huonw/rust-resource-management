@@ -16,11 +16,11 @@ There's three things to do here, all in and around the `main` function below:
    scatter `println!`s!  The file value will be closed when the variable holding it goes out of
    scope (like the end of a function).
 
-3. (extension) after reading the first line, also read the second line (the first row of data), and
-   print it out too. You can modify `read_line` if you want to.
+2. just open the file (no need to play with its closing), use `read_line` to read the first
+   line of the file (the headings), and print it out
 
 3. (extension) after reading the first line, also read the second line (the first row of data), and
-   print it out too (you can modify `read_line` if you want to)
+   print it out too. You can modify `read_line` if you want to.
 
 # Reminder
 
@@ -55,8 +55,32 @@ use std::io::{self, BufRead, BufReader};
 
 // Rust binaries start at the `main` function.
 fn main() {
+    println!("inside `main`");
     let file_name = "data/example.csv";
-    // let file = ...
+
+    println!("before `open_file`");
+    let file = open_file(file_name);
+    println!("after `open_file`");
+
+    println!("before `pass_through`");
+    let file2 = pass_through(file);
+    println!("after `pass_through`");
+
+    println!("before `consume`");
+    consume(file2);
+    println!("after `consume`");
+
+    println!("leaving `main`");
+}
+
+fn pass_through(file: File) -> File {
+    println!("inside `pass_through`");
+    file
+}
+
+fn consume(_file: File) {
+    println!("inside `consume`");
+    // do nothing, just let the `_file` variable go out of scope at the end of the function
 }
 
 

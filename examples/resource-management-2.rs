@@ -16,11 +16,11 @@ There's three things to do here, all in and around the `main` function below:
    scatter `println!`s!  The file value will be closed when the variable holding it goes out of
    scope (like the end of a function).
 
-3. (extension) after reading the first line, also read the second line (the first row of data), and
-   print it out too. You can modify `read_line` if you want to.
+2. just open the file (no need to play with its closing), use `read_line` to read the first
+   line of the file (the headings), and print it out
 
 3. (extension) after reading the first line, also read the second line (the first row of data), and
-   print it out too (you can modify `read_line` if you want to)
+   print it out too. You can modify `read_line` if you want to.
 
 # Reminder
 
@@ -56,7 +56,10 @@ use std::io::{self, BufRead, BufReader};
 // Rust binaries start at the `main` function.
 fn main() {
     let file_name = "data/example.csv";
-    // let file = ...
+    let file = open_file(file_name);
+
+    let headings = read_line(file);
+    println!("headings: {}", headings);
 }
 
 
