@@ -1130,6 +1130,22 @@ fn main() {
 }
 ```
 
+
+# Exercise
+
+<div class="notes">
+
+TODO
+
+</div>
+
+Open
+
+<code class="exercise">src/bin/summarise-csv.rs</code>
+
+Run using `cargo run --bin summarise-csv`.
+
+
 # Extensions
 
 - parallelism: [docs.rs/rayon](https://docs.rs/rayon)
