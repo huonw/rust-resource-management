@@ -140,3 +140,15 @@ blockquote::before {
     vertical-align: bottom;
     color: gray;
 }
+
+.notes {
+    display: none;
+    font-size: 50%;
+    border: 1px solid gray;
+    padding: 10px;
+    border-radius: 10px;
+    background: #555;
+}
+.notes.show {
+    display: block;
+}

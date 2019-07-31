@@ -45,7 +45,13 @@ window.addEventListener('load', function () {
     forward.classList.add('nav-symbol');
     forward.textContent = '▶';
 
+    var notes = document.createElement('span');
+    notes.id = 'nav-notes';
+    notes.classList.add('nav-symbol');
+    notes.innerHTML = '&#9432;'
+
     nav.appendChild(back);
+    nav.appendChild(notes);
     nav.appendChild(forward);
     document.body.appendChild(nav);
 
@@ -93,6 +99,10 @@ window.addEventListener('load', function () {
         current++;
         update();
     });
+    notes.addEventListener('click', function(ev) {
+      var list = document.getElementsByClassName("notes");
+      [].forEach.call(list, x => x.classList.toggle("show"));
+    })
     back.addEventListener('click', function(ev) {
         current--;
         update();
