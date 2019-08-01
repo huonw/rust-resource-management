@@ -91,7 +91,7 @@ found, consistently, 70% of them were caused by memory safety
 problems.
 
 Memory safety is a crucial building block for any other form of
-correctness, and violations can result in, at bestm a segfault, or at
+correctness, and violations can result in, at best, a segfault, or at
 worst memory corruption and security vulnerabilities.
 
 For low-level and high-performance programming, C and C++ are typical
@@ -400,7 +400,7 @@ For this example, we've got a main function that opens our file, and
 reads from it. And, then, as execution leaves the scope at the end of
 the function, meaning return to the caller, the file resource is
 automatically closed. The type has a drop function, aka a destructor
-or finalizer. that is automatically called on its values when they go
+or finalizer, that is automatically called on its values when they go
 out of scope.
 
 This ensures the resource is always closed, except in some rather
@@ -809,7 +809,13 @@ Same problems:
 
 We've seen consistently that having to clean up our resources can lead
 to problem, so garbage collection or GCs remove the need to clean up
-memory. This works great: without needing to call `free`, there's no
+memory. They are an optimisation on top of infinite memory: just never
+free anything, and there's no chance of calling free wrong. This is
+bad in a real program, since memory use would explode, so the computer
+will occasionally free some things in the background, when it works
+out they're obviously not needed.
+
+This works great: without needing to call `free`, there's no
 way to call it wrong. If a piece of memory is still accessible and so
 may be used in future, it won't be cleaned up, so no use-after-free,
 and, the GC itself is carefully implemented to only free things once
@@ -925,7 +931,30 @@ pub struct String {
 
 <div class="notes">
 
-TODO
+The final collection is a string slice. Maybe some of you noticed that
+I had to call `to_string` on a string literal? A string literal isn't
+a string, what is this language, etc.?
+
+A string slice is just a pointer to a particular piece of another
+string, without owning the memory. It isn't responsible for cleaning
+up the memory, and it doesn't keep that memory alive, like a tracing
+garbage collector. It's entirely derived from and dependent on a
+parent piece of memory.
+
+A string literal ends up as actual UTF-8 bytes in the program binary
+itself, and a so a literal ends up as a string slice pointing into the
+program's read-only memory segment.
+
+More interestingly, we can create a string slice by grabbing a chunk
+out of a parent string directly. For instance, if `line` is a `String`
+type, we can slice it using this range syntax, meaning from byte 5 up
+to but not including byte 9. This creates a slice pointing to those 4
+bytes in the original `line` string, the same memory locations.
+
+The ampersand without a `mut` is a shared or borrowed reference, or
+sometimes just a reference, and is related to a mutable
+reference. However, it is ok to have many of these pointers all to a
+single parent value, and so it's not ok to just freely mutate values.
 
 </div>
 
@@ -937,6 +966,7 @@ let column2: &str = &line[5..9];
 
 - a subsection or slice of some string data, somewhere
 - a "reference": not a resource, doesn't manage the memory!
+- can have many at once (sharing!), so no mutation
 
 ![](images/str.png)
 

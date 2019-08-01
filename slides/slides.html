@@ -90,7 +90,7 @@ proactively. They performed an analysis of Microsoft's CVEs, and
 found, consistently, 70% of them were caused by memory safety
 problems.</p>
 <p>Memory safety is a crucial building block for any other form of
-correctness, and violations can result in, at bestm a segfault, or at
+correctness, and violations can result in, at best, a segfault, or at
 worst memory corruption and security vulnerabilities.</p>
 <p>For low-level and high-performance programming, C and C++ are typical
 choices, and are likely the source of most of those vulnerabilities.</p>
@@ -318,7 +318,7 @@ they're defined, such as the body of a function.</p>
 reads from it. And, then, as execution leaves the scope at the end of
 the function, meaning return to the caller, the file resource is
 automatically closed. The type has a drop function, aka a destructor
-or finalizer. that is automatically called on its values when they go
+or finalizer, that is automatically called on its values when they go
 out of scope.</p>
 <p>This ensures the resource is always closed, except in some rather
 technical edge cases that don't apply to local variables like this. It
@@ -621,7 +621,12 @@ security vulnerabilities. And, the same if I called <code>free</code> twice.</p>
 <h1 id="memory-garbage-collection" class="section-header"><a href="#memory-garbage-collection">Memory: Garbage Collection</a></h1><div class="notes">
 <p>We've seen consistently that having to clean up our resources can lead
 to problem, so garbage collection or GCs remove the need to clean up
-memory. This works great: without needing to call <code>free</code>, there's no
+memory. They are an optimisation on top of infinite memory: just never
+free anything, and there's no chance of calling free wrong. This is
+bad in a real program, since memory use would explode, so the computer
+will occasionally free some things in the background, when it works
+out they're obviously not needed.</p>
+<p>This works great: without needing to call <code>free</code>, there's no
 way to call it wrong. If a piece of memory is still accessible and so
 may be used in future, it won't be cleaned up, so no use-after-free,
 and, the GC itself is carefully implemented to only free things once
@@ -704,7 +709,26 @@ disallowed and not easy to create a string that isn't valid.</p>
 <li>always valid UTF-8</li>
 </ul>
 <h1 id="collections-string-slices" class="section-header"><a href="#collections-string-slices">Collections: String Slices</a></h1><div class="notes">
-<p>TODO</p>
+<p>The final collection is a string slice. Maybe some of you noticed that
+I had to call <code>to_string</code> on a string literal? A string literal isn't
+a string, what is this language, etc.?</p>
+<p>A string slice is just a pointer to a particular piece of another
+string, without owning the memory. It isn't responsible for cleaning
+up the memory, and it doesn't keep that memory alive, like a tracing
+garbage collector. It's entirely derived from and dependent on a
+parent piece of memory.</p>
+<p>A string literal ends up as actual UTF-8 bytes in the program binary
+itself, and a so a literal ends up as a string slice pointing into the
+program's read-only memory segment.</p>
+<p>More interestingly, we can create a string slice by grabbing a chunk
+out of a parent string directly. For instance, if <code>line</code> is a <code>String</code>
+type, we can slice it using this range syntax, meaning from byte 5 up
+to but not including byte 9. This creates a slice pointing to those 4
+bytes in the original <code>line</code> string, the same memory locations.</p>
+<p>The ampersand without a <code>mut</code> is a shared or borrowed reference, or
+sometimes just a reference, and is related to a mutable
+reference. However, it is ok to have many of these pointers all to a
+single parent value, and so it's not ok to just freely mutate values.</p>
 </div>
 
 <div class="example-wrap"><pre class="rust rust-example-rendered">
@@ -714,6 +738,7 @@ disallowed and not easy to create a string that isn't valid.</p>
 <ul>
 <li>a subsection or slice of some string data, somewhere</li>
 <li>a &quot;reference&quot;: not a resource, doesn't manage the memory!</li>
+<li>can have many at once (sharing!), so no mutation</li>
 </ul>
 <p><img src="images/str.png" alt="" /></p>
 <h1 id="danger" class="section-header"><a href="#danger">Danger?</a></h1><div class="notes">
