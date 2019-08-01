@@ -30,8 +30,9 @@
 <div class="notes">
 <p>70% of security vulnerabilities in Microsoft products were due to the
 difficulty humans have writing safe C and C++ code. Rust is a
-low-level programming language in the same vein that helps the
-computer help us write safe code.</p>
+low-level programming language that helps the computer help us write
+safe code. We're going to learn the key piece of resource-management
+infrastructure that makes Rust work, ownership and borrowing.</p>
 <p>I'm Huon, a software engineer on the platform team of the IA or
 stellargraph project, and I've got some experience with Rust, so I'm
 going to try to help you take some early steps with it.</p>
@@ -72,7 +73,11 @@ $ cd rust-resource-management
 </code></pre>
 <pre><code class="language-shell">$ cargo --version
 cargo 1.36.0 (c4fcfb725 2019-05-15)
-$ cargo run
+$ cargo run --example summarise-csv-1
+...
+year: mean = 2020
+data: mean = 3374
+$ cargo run --example hello-world
 ...
 Hello world
 </code></pre>
@@ -169,7 +174,8 @@ $ <span class="ident">cargo</span> <span class="ident">run</span> <span class="o
 <span class="ident">year</span>: <span class="ident">min</span> <span class="op">=</span> <span class="number">2019</span>, <span class="ident">mean</span> <span class="op">=</span> <span class="number">2020</span>, <span class="ident">max</span> <span class="op">=</span> <span class="number">2021</span>
 <span class="ident">data</span>: <span class="ident">min</span> <span class="op">=</span> <span class="number">61</span>, <span class="ident">mean</span> <span class="op">=</span> <span class="number">3374</span>, <span class="ident">max</span> <span class="op">=</span> <span class="number">9999</span></pre></div>
 <h1 id="structure-1" class="section-header"><a href="#structure-1">Structure</a></h1><div class="notes">
-<p>TODO</p>
+<p>We know the goal, we know about Rust, let's dive straight in to what
+makes Rust tick. Managing of resources.</p>
 </div>
 <ul>
 <li>Introduction</li>
