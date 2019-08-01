@@ -250,6 +250,8 @@ fn test_summarise_columns() {
     // literal, just prefixing it with `b`. This array has 3 rows,
     // each with two elements.
     let two_by_three: &[u8] = b"2019,61\n2020,62\n2021,9999";
+
+    unimplemented!();
 }
 
 // Provided functions and types:

@@ -87,6 +87,8 @@ fn test_split_headings_loop() {
     // - `assert_eq!` compares its two arguments for equality (using the `==` operator, which does
     //   value comparisons), e.g. `assert_eq!(baz(x), qux(y))`. Documentation:
     //   https://doc.rust-lang.org/std/macro.assert_eq.html
+
+    unimplemented!()
 }
 
 

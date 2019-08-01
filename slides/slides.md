@@ -18,27 +18,11 @@ going to try to help you take some early steps with it.
 
 </div>
 
-# My Background
-
-- Data61 (last August). Previously: Apple on Swift, Mozilla on Rust
-- Dabbled in many programming languages
-
-<img src="images/commits.png" style="max-width: 1000px;">
-
-# Your Background?
-
-- Rust
-- **Low-level** <small>(C, C++, assembly)</small>
-- **Statically-typed, functional** <small>(Haskell, F#, Scala, OCaml)</small>
-- **Statically-typed, object-oriented** <small>(Java, C#, Swift, Scala)</small>
-- **Dynamically-typed, scripting** <small>(Javascript, Python, PHP, Ruby, Shell)</small>
-- **Other** <small>(TypeScript, Go, Fortran, R, Matlab, SQL, Lisp (Clojure, Common Lisp))</small>
-
 # Structure
 
 <div class="notes">
 
-How are we going to get there? There'll be 3 sets of exercises: first
+What's the plan for today? There'll be 3 sets of exercises: first
 Rust's approach to resource management, then looking at borrowing,
 which is how we can work with resources without also having to manage
 them, and finally, we're going to finish the project.
@@ -50,12 +34,15 @@ them, and finally, we're going to finish the project.
 - Mutation and borrowing
 - Putting it together
 
-# Interlude: Setup
+# Setup
 
 <div class="notes">
 
 Before going forward more, let's get things set up, so that can happen
 in parallel and everyone is ready when we get to the first exercise soon.
+
+If links need to be sent around, I created a `#rust` channel on the
+Data61 slack.
 
 </div>
 
@@ -63,6 +50,8 @@ in parallel and everyone is ready when we get to the first exercise soon.
 $ git clone https://github.com/huonw/rust-resource-management.git
 $ cd rust-resource-management
 ```
+
+[rust-lang.org/tools/install](https://rust-lang.org/tools/install)
 
 ``` shell
 $ cargo --version
@@ -76,9 +65,58 @@ $ cargo run --example hello-world
 Hello world
 ```
 
-[rust-lang.org/tools/install](https://rust-lang.org/tools/install)
-
 (These slides in `slides/`)
+
+# My Background
+
+<div class="notes">
+
+All set up? Why am I talking about Rust? Well, I joined data61 about a
+year, from Apple, where I was working on the compiler for the Swift
+programming language for about 2 years. Before that, I was heavily
+involved in the Rust project for about 3 years, initially as just a
+volunteer, then got invited into the "core team" as one of the first
+community members outside Mozilla, and then various other things, and
+interned there in 2015, until you can see my commit-rate drop off in
+late 2015 and early 2016, as I finished my masters and got hired by
+Apple.
+
+I'm not a zealot about programming languages. A lot of the most
+skilled compiler/language developers I worked with at those two jobs
+were very reasonable in their approach to the wide world of
+programming languages, and I seek to emulate that. I've used languages
+from all over the place, so no matter your backgrounds hopefully I'll
+be able to answer questions, or at least have a vague idea of where to
+point you.
+
+</div>
+
+- Data61 (last August). Previously: Apple on Swift, Mozilla on Rust
+- Dabbled in many programming languages
+
+<img src="images/commits.png" style="max-width: 1000px;">
+
+# Your Background?
+
+<div class="notes">
+
+Speaking of which, I'd love to have a sense for where you're all coming from.
+
+How many people had considered learning Rust before the retreat? How many people
+had considered learning it and maybe even installed a compiler and
+started the tutorial? Anyone used it for real?
+
+What about these other categories? Who's used low-level languages like
+C or C++? ...
+
+</div>
+
+- Rust
+- **Low-level** <small>(C, C++, assembly)</small>
+- **Statically-typed, functional** <small>(Haskell, F#, Scala, OCaml)</small>
+- **Statically-typed, object-oriented** <small>(Java, C#, Swift, Scala)</small>
+- **Dynamically-typed, scripting** <small>(Javascript, Python, PHP, Ruby, Shell)</small>
+- **Other** <small>(TypeScript, Go, Fortran, R, Matlab, SQL, Lisp (Clojure, Common Lisp))</small>
 
 # Why Rust?
 
@@ -115,12 +153,11 @@ majority of those bugs.
 
 <div style="text-align: right">
 
-&mdash; [*A Proactive Approach to More Secure Code* Microsoft Security Response Center](https://msrc-blog.microsoft.com/2019/07/16/a-proactive-approach-to-more-secure-code)
+&mdash; [*A Proactive Approach to More Secure Code*](https://msrc-blog.microsoft.com/2019/07/16/a-proactive-approach-to-more-secure-code) Microsoft Security Response Center
 
 </div>
 
-
-# Buzzwords
+# What Rust?
 
 <div class="notes">
 
@@ -140,7 +177,7 @@ and also uses this to get some measure of thread safety.
 - **memory safety**, without a garbage collector
 - **affine typing**
 
-# Buzzwords
+# What Rust?
 
 <div class="notes">
 
@@ -172,6 +209,40 @@ OCaml: a low-level language with high-level conveniences.
 - nice tooling
 - good platform support (Windows, macOS, Linux, WASM, ...)
 
+# Where Rust?
+
+<div class="notes">
+
+Rust is great in many ways, such as being nice to use and the
+community is quite friendly, and there's a few places that it excels
+particularly.
+
+For instance, the safety of Rust has means that a bug when parsing
+untrusted is likely to crash the program or result in incorrect
+output, which is bad, but many times better than a security
+vulnerability like remote code execution as one risks in C and C++.
+
+The lack of a garbage collector and runtime means it is quite easy to
+embed a Rust library other languages. If those languages can call C,
+they can call Rust, since it supports exposing a C compatible interface.
+
+Because of this, it is a great way to optimise a hotspot in a higher
+level language. One common approach is to write a C module/extension,
+an alternative is to write a Rust one. This is the first place Rust
+was used commercially outside Mozilla.
+
+Rust's performance and control over how and where memory gets
+allocated and used means it is great for places with limitations on
+resources, such as reducing the number of servers required for a web
+service.
+
+
+</div>
+
+- parsing untrusted input (file formats, network protocols)
+- libraries to be used inside other languages
+- optimising hotspots in Python, Ruby, Javascript, ...
+- satisfying resource constraints (especially memory)
 
 # The Project: Summarise a CSV file
 
@@ -406,7 +477,7 @@ out of scope.
 This ensures the resource is always closed, except in some rather
 technical edge cases that don't apply to local variables like this. It
 also means that there's no chance of closing twice, or reading after
-closing, because there variable is not at all accessible.
+closing, because the variable is not at all accessible.
 
 </div>
 
@@ -475,10 +546,10 @@ so the destructor is only called once. The trick here, that differs
 from C++, is that resources are tied to values, and these values can
 be easily moved around from place to place.
 
-`open_file` has a local variable containing a File type, but it is
-moved into the caller as the return value. The compiler knows `file1`
-no longer contains a valid File resource, and so doesn't need to, and
-shouldn't run the destructor.
+`open_file` has a local variable containing a File type, but the value
+it holds is moved into the caller as the return value. The compiler
+knows `file1` no longer contains a valid File resource, and so doesn't
+need to, and shouldn't run the destructor.
 
 A similar thing happens in `main`, where the `file2` value is filled
 in with a `File` resource from the `open_file` call. This resource is
@@ -518,8 +589,10 @@ That's probably a lot to take in, so let's get our hands dirty.
 
 I've set three exercises in the `src/bin/resource-management.rs`
 file. The first is exploratory, and the second has a goal, and the
-third is a bit of an extension. The solution isn't exactly in the
-stuff I've told you, but you may be able to guess.
+third is a bit of an extension, that would be great to experiment
+with. Solving it may take some experimentation and a guess or two,
+since it's not in the stuff I've told you yet. We're going to talk
+about the solution after, but trying it out would be great.
 
 </div>
 
@@ -745,7 +818,7 @@ duplicated.
 > pure functional programming is an ingenious trick to show you can
 > code without mutation, but Rust is an even cleverer trick to show
 > you can just have mutation. &mdash;
-> [*Notes on a Smaller Rust* @withoutboats](https://boats.gitlab.io/blog/post/notes-on-a-smaller-rust/)
+> [*Notes on a Smaller Rust*](https://boats.gitlab.io/blog/post/notes-on-a-smaller-rust/) @withoutboats
 
 <br>
 
@@ -1143,6 +1216,54 @@ Part 3:
 
 ``` rust
 fn split_headings_loop(headings_line: &str) -> Vec<&str> {
+    let mut result = vec![];
+
+    for heading in headings_line.split(',') {
+        result.push(heading)
+    }
+
+    result
+}
+
+fn main() {
+    // ...
+    let headings: Vec<&str> = split_headings_loop(&headings_line);
+    // ...
+}
+```
+
+# Solution: lifetimes
+
+<div class="notes">
+
+How can this possibly be safe? The code I just wrote is an elided form
+of the full code.
+
+There's implicitly a connection between the incoming
+string slice, and the outgoing ones, saying that the outgoing ones are
+derived from the input ones. This connection can be express explicitly
+be annotating the references with a so called lifetime
+parameter. These parameters are declared in angle brackets, and all
+they do is communicate the "derived-from" connection between
+references.
+
+This allows the compiler to understand in `main` that the return
+strings are derived from the input parameter, `headings_line`, and so
+are valid as long as `headings_line` is valid. If we tried to do
+something that would invalid the parent string while our slices still
+existed, the compiler would complain.
+
+Unfortunately, I don't think I have time to cover this in detail, but
+the key point is: lifetimes allow connecting output references to the
+inputs from which they come. The compiler uses this to reason about
+when references are valid across functions.
+
+</div>
+
+Part 3:
+
+``` rust
+fn split_headings_loop<'a>(headings_line: &'a str) -> Vec<&'a str> {
     let mut result = vec![];
 
     for heading in headings_line.split(',') {
