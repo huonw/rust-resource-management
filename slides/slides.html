@@ -56,7 +56,7 @@ going to try to help you take some early steps with it.</p>
 Rust's approach to resource management, then looking at borrowing,
 which is how we can work with resources without also having to manage
 them, and finally, we're going to finish the project.</p>
-</Div>
+</div>
 <ul>
 <li>⇒ <em>Introduction</em></li>
 <li>Resource management</li>
@@ -67,9 +67,8 @@ them, and finally, we're going to finish the project.</p>
 <p>Before going forward more, let's get things set up, so that can happen
 in parallel and everyone is ready when we get to the first exercise soon.</p>
 </div>
-<p>TODO: fill out repo name</p>
-<pre><code class="language-shell">$ git clone https://github.com/huonw/...
-$ cd ...
+<pre><code class="language-shell">$ git clone https://github.com/huonw/rust-resource-management.git
+$ cd rust-resource-management
 </code></pre>
 <pre><code class="language-shell">$ cargo --version
 cargo 1.36.0 (c4fcfb725 2019-05-15)
@@ -870,17 +869,35 @@ error handling and performance.</p>
 <p>Open</p>
 <p><code class="exercise">src/bin/summarise-csv.rs</code></p>
 <p>Run using <code>cargo run --bin summarise-csv</code>.</p>
+<h1 id="solutions--thank-you" class="section-header"><a href="#solutions--thank-you">Solutions &amp; Thank You</a></h1>
+<p>All solutions at <code>examples/summarise-csv-....rs</code> (run with <code>cargo run --example summarise-csv-...</code>).</p>
+<ul>
+<li>More links in <code>README.md</code></li>
+<li><code>#rust</code> on Data61 Slack</li>
+<li>I'm <code>huon</code>/<code>huonw</code>/<code>Huon.Wilson@data61.csiro.au</code></li>
+</ul>
 <h1 id="extensions-dependencies" class="section-header"><a href="#extensions-dependencies">Extensions: Dependencies</a></h1>
 <ul>
+<li>profile/optimise: <code>perf</code> (Linux), <code>Instruments</code> (macOS), ...</li>
 <li>parallelism: <a href="https://docs.rs/rayon">docs.rs/rayon</a></li>
 <li>property testing: <a href="https://docs.rs/proptest">docs.rs/proptest</a></li>
 <li>fuzzing: <a href="https://github.com/rust-fuzz/cargo-fuzz/">github.com/rust-fuzz/cargo-fuzz</a></li>
 </ul>
+<h1 id="profileoptimise" class="section-header"><a href="#profileoptimise">Profile/Optimise</a></h1>
+<p>Probably find that float parsing is the slow point.</p>
+<p><img src="images/profile.png" alt="" /></p>
+<p>Add to <code>Cargo.toml</code>:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered">
+[<span class="ident">dependencies</span>]
+<span class="ident">lexical</span> <span class="op">=</span> <span class="string">&quot;2.2.2&quot;</span></pre></div>
+<p><a href="https://docs.rs/lexical">docs.rs/lexical</a></p>
 <h1 id="parallelism" class="section-header"><a href="#parallelism">Parallelism</a></h1>
 <p>Add to <code>Cargo.toml</code>:</p>
 
-<pre><code>`[dependencies]`
-rayon = "1.1.0"</code></pre>
+<div class="example-wrap"><pre class="rust rust-example-rendered">
+[<span class="ident">dependencies</span>]
+<span class="ident">rayon</span> <span class="op">=</span> <span class="string">&quot;1.1.0&quot;</span></pre></div>
 <p><a href="https://docs.rs/rayon/1.1.0/rayon/iter/index.html">docs.rs/rayon/1.1.0/rayon/iter/index.html</a></p>
 <h1 id="property-testing" class="section-header"><a href="#property-testing">Property Testing</a></h1>
 <p>Add to <code>Cargo.toml</code>:</p>
@@ -888,8 +905,13 @@ rayon = "1.1.0"</code></pre>
 <div class="example-wrap"><pre class="rust rust-example-rendered">
 [<span class="ident">dependencies</span>]
 <span class="ident">proptest</span> <span class="op">=</span> <span class="string">&quot;0.9.4&quot;</span></pre></div>
+<p><a href="https://altsysrq.github.io/proptest-book/intro.html">altsysrq.github.io/proptest-book/intro.html</a></p>
 <h1 id="fuzzing-linux--macos-only" class="section-header"><a href="#fuzzing-linux--macos-only">Fuzzing (Linux &amp; macOS only)</a></h1>
-<p><code>rustup update nightly</code>, run <code>cargo +nightly install cargo-fuzz</code>.</p>
+<p>Run:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered">
+$ <span class="ident">rustup</span> <span class="ident">update</span> <span class="ident">nightly</span>
+$ <span class="ident">cargo</span> <span class="op">+</span><span class="ident">nightly</span> <span class="ident">install</span> <span class="ident">cargo</span><span class="op">-</span><span class="ident">fuzz</span></pre></div>
 <p><a href="https://rust-fuzz.github.io/book/cargo-fuzz.html">rust-fuzz.github.io/book/cargo-fuzz.html</a></p>
 <p>Need to pull shared code into <code>src/lib.rs</code>, and made public <code>pub fn</code> and <code>pub struct</code>.</p>
 

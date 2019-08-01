@@ -8,8 +8,9 @@ Huon Wilson, 2019-08-02
 
 70% of security vulnerabilities in Microsoft products were due to the
 difficulty humans have writing safe C and C++ code. Rust is a
-low-level programming language in the same vein that helps the
-computer help us write safe code.
+low-level programming language that helps the computer help us write
+safe code. We're going to learn the key piece of resource-management
+infrastructure that makes Rust work, ownership and borrowing.
 
 I'm Huon, a software engineer on the platform team of the IA or
 stellargraph project, and I've got some experience with Rust, so I'm
@@ -66,7 +67,11 @@ $ cd rust-resource-management
 ``` shell
 $ cargo --version
 cargo 1.36.0 (c4fcfb725 2019-05-15)
-$ cargo run
+$ cargo run --example summarise-csv-1
+...
+year: mean = 2020
+data: mean = 3374
+$ cargo run --example hello-world
 ...
 Hello world
 ```
@@ -204,7 +209,8 @@ data: min = 61, mean = 3374, max = 9999
 
 <div class="notes">
 
-TODO
+We know the goal, we know about Rust, let's dive straight in to what
+makes Rust tick. Managing of resources.
 
 </div>
 
@@ -1155,19 +1161,43 @@ Open
 
 Run using `cargo run --bin summarise-csv`.
 
+# Solutions & Thank You
+
+All solutions at `examples/summarise-csv-....rs` (run with `cargo run
+--example summarise-csv-...`).
+
+- More links in `README.md`
+- `#rust` on Data61 Slack
+- I'm `huon`/`huonw`/`Huon.Wilson@data61.csiro.au`
 
 # Extensions: Dependencies
 
+- profile/optimise: `perf` (Linux), `Instruments` (macOS), ...
 - parallelism: [docs.rs/rayon](https://docs.rs/rayon)
 - property testing: [docs.rs/proptest](https://docs.rs/proptest)
 - fuzzing: [github.com/rust-fuzz/cargo-fuzz](https://github.com/rust-fuzz/cargo-fuzz/)
+
+# Profile/Optimise
+
+Probably find that float parsing is the slow point.
+
+![](images/profile.png)
+
+Add to `Cargo.toml`:
+
+``` rust
+[dependencies]
+lexical = "2.2.2"
+```
+
+[docs.rs/lexical](https://docs.rs/lexical)
 
 # Parallelism
 
 Add to `Cargo.toml`:
 
 ``` rust
-`[dependencies]`
+[dependencies]
 rayon = "1.1.0"
 ```
 
@@ -1182,9 +1212,16 @@ Add to `Cargo.toml`:
 proptest = "0.9.4"
 ```
 
+[altsysrq.github.io/proptest-book/intro.html](https://altsysrq.github.io/proptest-book/intro.html)
+
 # Fuzzing (Linux & macOS only)
 
-`rustup update nightly`, run `cargo +nightly install cargo-fuzz`.
+Run:
+
+``` rust
+$ rustup update nightly
+$ cargo +nightly install cargo-fuzz
+```
 
 [rust-fuzz.github.io/book/cargo-fuzz.html](https://rust-fuzz.github.io/book/cargo-fuzz.html)
 
