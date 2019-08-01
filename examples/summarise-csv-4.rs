@@ -74,9 +74,10 @@ fn main() {
     // ignore the leading element(s) of an iterator:
     // https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.skip
 
-    let file_name = "data/example.csv";
-
-    summarise_file(file_name);
+    for file_name in std::env::args().skip(1) {
+        println!("summary for {}", file_name);
+        summarise_file(&file_name);
+    }
 }
 
 fn summarise_file(file_name: &str) {
@@ -141,9 +142,10 @@ fn test_split_headings() {
 // so, for use in the `vec!` macro below, and so we can "derive" an
 // implementation of the `Clone` trait, which is how Rust does
 // explicit copies.
-#[derive(Clone)]
+#[derive(Clone, PartialEq, Debug)]
 struct Summary {
     count: u64,
+    sum: f64,
 }
 
 impl Summary {
@@ -155,6 +157,7 @@ impl Summary {
     fn new() -> Summary {
         Summary {
             count: 0,
+            sum: 0.0,
         }
     }
 
@@ -167,9 +170,14 @@ impl Summary {
     // This function adds a new value (in the form of a 64-bit
     // floating point number, aka `double`) to this summary.
     fn add(&mut self, value: f64) {
-        unimplemented!()
+        self.count += 1;
+        self.sum += value;
     }
 
+    // Similarly, a method can work a borrowed or immutable reference
+    // to its receiver, typically for 'const' or read-only things,
+    // using `&self`.
+    //
     // Similarly, a method can work a borrowed or immutable reference
     // to its receiver, typically for 'const' or read-only things,
     // using `&self`.
@@ -178,12 +186,12 @@ impl Summary {
     // doesn't automatically promote numeric types: it has to be done
     // explicitly using `value as type` (e.g. `self.count as f64`).
     fn mean(&self) -> f64 {
-        unimplemented!()
+        self.sum / self.count as f64
     }
 }
 
-fn summarise_columns(num_columns: usize, file: &mut File) -> Vec<Summary> {
-    let summaries = vec![Summary::new(); num_columns];
+fn summarise_columns(num_columns: usize, file: &mut (impl std::io::BufRead)) -> Vec<Summary> {
+    let mut summaries = vec![Summary::new(); num_columns];
 
     for raw_row in file.lines() {
         // reading the row may fail, so the lines iterator doesn't
@@ -217,7 +225,10 @@ fn summarise_columns(num_columns: usize, file: &mut File) -> Vec<Summary> {
         //
         // (The discussion of `zip` in `summarise_file` might be
         // useful.)
-        unimplemented!()
+        for (element, summary) in row.split(',').zip(&mut summaries) {
+            let value = element.parse::<f64>().unwrap();
+            summary.add(value)
+        }
     }
 
     summaries
@@ -249,7 +260,16 @@ fn test_summarise_columns() {
     // A byte array can be created exactly the same way as a string
     // literal, just prefixing it with `b`. This array has 3 rows,
     // each with two elements.
-    let two_by_three: &[u8] = b"2019,61\n2020,62\n2021,9999";
+    let mut two_by_three: &[u8] = b"2019,61\n2020,62\n2021,9999";
+
+    let result = summarise_columns(2, &mut two_by_three);
+    assert_eq!(
+        result,
+        vec![
+            Summary { count: 3, sum: 2019.0 + 2020.0 + 2021.0 },
+            Summary { count: 3, sum: 61.0 + 62.0 + 9999.0 }
+        ]
+    );
 }
 
 // Provided functions and types:

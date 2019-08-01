@@ -144,6 +144,7 @@ fn test_split_headings() {
 #[derive(Clone)]
 struct Summary {
     count: u64,
+    sum: f64,
 }
 
 impl Summary {
@@ -155,6 +156,7 @@ impl Summary {
     fn new() -> Summary {
         Summary {
             count: 0,
+            sum: 0.0,
         }
     }
 
@@ -167,9 +169,14 @@ impl Summary {
     // This function adds a new value (in the form of a 64-bit
     // floating point number, aka `double`) to this summary.
     fn add(&mut self, value: f64) {
-        unimplemented!()
+        self.count += 1;
+        self.sum += value;
     }
 
+    // Similarly, a method can work a borrowed or immutable reference
+    // to its receiver, typically for 'const' or read-only things,
+    // using `&self`.
+    //
     // Similarly, a method can work a borrowed or immutable reference
     // to its receiver, typically for 'const' or read-only things,
     // using `&self`.
@@ -178,12 +185,12 @@ impl Summary {
     // doesn't automatically promote numeric types: it has to be done
     // explicitly using `value as type` (e.g. `self.count as f64`).
     fn mean(&self) -> f64 {
-        unimplemented!()
+        self.sum / self.count as f64
     }
 }
 
 fn summarise_columns(num_columns: usize, file: &mut File) -> Vec<Summary> {
-    let summaries = vec![Summary::new(); num_columns];
+    let mut summaries = vec![Summary::new(); num_columns];
 
     for raw_row in file.lines() {
         // reading the row may fail, so the lines iterator doesn't
@@ -217,7 +224,10 @@ fn summarise_columns(num_columns: usize, file: &mut File) -> Vec<Summary> {
         //
         // (The discussion of `zip` in `summarise_file` might be
         // useful.)
-        unimplemented!()
+        for (element, summary) in row.split(',').zip(&mut summaries) {
+            let value = element.parse::<f64>().unwrap();
+            summary.add(value)
+        }
     }
 
     summaries
