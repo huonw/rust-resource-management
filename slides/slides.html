@@ -53,16 +53,16 @@ going to try to help you take some early steps with it.</p>
 </ul>
 <h1 id="structure" class="section-header"><a href="#structure">Structure</a></h1><div class="notes">
 <p>How are we going to get there? There'll be 3 sets of exercises: first
-Rust's approach to resource management, then looking at borrowing, how
-we can work with resources without also having to manage them.</p>
-</div>
+Rust's approach to resource management, then looking at borrowing,
+which is how we can work with resources without also having to manage
+them, and finally, we're going to finish the project.</p>
+</Div>
 <ul>
 <li>⇒ <em>Introduction</em></li>
-<li>Resource Management</li>
-<li>Mutation and Borrowing</li>
-<li></li>
+<li>Resource management</li>
+<li>Mutation and borrowing</li>
+<li>Putting it together</li>
 </ul>
-<p>TODO</p>
 <h1 id="interlude-setup" class="section-header"><a href="#interlude-setup">Interlude: Setup</a></h1><div class="notes">
 <p>Before going forward more, let's get things set up, so that can happen
 in parallel and everyone is ready when we get to the first exercise soon.</p>
@@ -174,11 +174,10 @@ $ <span class="ident">cargo</span> <span class="ident">run</span> <span class="o
 </div>
 <ul>
 <li>Introduction</li>
-<li>⇒ <em>Resource Management</em></li>
-<li>Mutation and Borrowing</li>
-<li></li>
+<li>⇒ <em>Resource management</em></li>
+<li>Mutation and borrowing</li>
+<li>Putting it together</li>
 </ul>
-<p>TODO</p>
 <h1 id="resource-management-good" class="section-header"><a href="#resource-management-good">Resource Management: Good</a></h1><div class="notes">
 <p>Resources can be anything: a file, a socket connection to another host
 or a user session. In any programming language, there's a lifecycle
@@ -513,11 +512,10 @@ having to move the <code>File</code> value around in memory.</p>
 </div>
 <ul>
 <li>Introduction</li>
-<li>Resource Management</li>
-<li>⇒ <em>Mutation and Borrowing</em></li>
-<li></li>
+<li>Resource management</li>
+<li>⇒ <em>Mutation and borrowing</em></li>
+<li>Putting it together</li>
 </ul>
-<p>TODO</p>
 <h1 id="mut-mutation-xor-sharing" class="section-header"><a href="#mut-mutation-xor-sharing"><code>&amp;mut</code>: mutation XOR sharing</a></h1><div class="notes">
 <p>The language has a mutable or unique reference. This is a nicer
 version of take and return pattern we just saw, and is a pointer that
@@ -853,12 +851,47 @@ reference to the string, instead of the string itself.</p>
     <span class="kw">let</span> <span class="ident">headings</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">str</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">split_headings_loop</span>(<span class="kw-2">&amp;</span><span class="ident">headings_line</span>);
     <span class="comment">// ...</span>
 }</pre></div>
-<h1 id="extensions" class="section-header"><a href="#extensions">Extensions</a></h1>
+<h1 id="structure-3" class="section-header"><a href="#structure-3">Structure</a></h1><div class="notes">
+<p>No more talking, just coding.</p>
+</div>
+<ul>
+<li>Introduction</li>
+<li>Resource management</li>
+<li>Mutation and borrowing</li>
+<li>⇒ <em>Putting it together</em></li>
+</ul>
+<h1 id="exercise-2" class="section-header"><a href="#exercise-2">Exercise</a></h1><div class="notes">
+<p>Now we get on to the meat of this tutorial. Let's summarise a CSV
+file. This exercise is longer. First we'll get summarisation working
+on <code>data/example.csv</code>, then we'll support other files, look at the
+performance, make it testable, and then as extensions, improve the
+error handling and performance.</p>
+</div>
+<p>Open</p>
+<p><code class="exercise">src/bin/summarise-csv.rs</code></p>
+<p>Run using <code>cargo run --bin summarise-csv</code>.</p>
+<h1 id="extensions-dependencies" class="section-header"><a href="#extensions-dependencies">Extensions: Dependencies</a></h1>
 <ul>
 <li>parallelism: <a href="https://docs.rs/rayon">docs.rs/rayon</a></li>
 <li>property testing: <a href="https://docs.rs/proptest">docs.rs/proptest</a></li>
 <li>fuzzing: <a href="https://github.com/rust-fuzz/cargo-fuzz/">github.com/rust-fuzz/cargo-fuzz</a></li>
 </ul>
+<h1 id="parallelism" class="section-header"><a href="#parallelism">Parallelism</a></h1>
+<p>Add to <code>Cargo.toml</code>:</p>
+
+<pre><code>`[dependencies]`
+rayon = "1.1.0"</code></pre>
+<p><a href="https://docs.rs/rayon/1.1.0/rayon/iter/index.html">docs.rs/rayon/1.1.0/rayon/iter/index.html</a></p>
+<h1 id="property-testing" class="section-header"><a href="#property-testing">Property Testing</a></h1>
+<p>Add to <code>Cargo.toml</code>:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered">
+[<span class="ident">dependencies</span>]
+<span class="ident">proptest</span> <span class="op">=</span> <span class="string">&quot;0.9.4&quot;</span></pre></div>
+<h1 id="fuzzing-linux--macos-only" class="section-header"><a href="#fuzzing-linux--macos-only">Fuzzing (Linux &amp; macOS only)</a></h1>
+<p><code>rustup update nightly</code>, run <code>cargo +nightly install cargo-fuzz</code>.</p>
+<p><a href="https://rust-fuzz.github.io/book/cargo-fuzz.html">rust-fuzz.github.io/book/cargo-fuzz.html</a></p>
+<p>Need to pull shared code into <code>src/lib.rs</code>, and made public <code>pub fn</code> and <code>pub struct</code>.</p>
 
     
 </body>

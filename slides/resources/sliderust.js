@@ -50,7 +50,12 @@ window.addEventListener('load', function () {
     notes.classList.add('nav-symbol');
     notes.innerHTML = '&#9432;'
 
+    var pageNumber = document.createElement('span');
+    pageNumber.id = 'nav-page-number';
+    pageNumber.classList.add('nav-symbol');
+
     nav.appendChild(back);
+    nav.appendChild(pageNumber);
     nav.appendChild(notes);
     nav.appendChild(forward);
     document.body.appendChild(nav);
@@ -84,6 +89,7 @@ window.addEventListener('load', function () {
       sections[current].className += ' current';
 
       history.replaceState(null, "", "#" + current);
+      pageNumber.textContent = current;
     }
 
     update();

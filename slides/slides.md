@@ -38,17 +38,16 @@ going to try to help you take some early steps with it.
 <div class="notes">
 
 How are we going to get there? There'll be 3 sets of exercises: first
-Rust's approach to resource management, then looking at borrowing, how
-we can work with resources without also having to manage them.
+Rust's approach to resource management, then looking at borrowing,
+which is how we can work with resources without also having to manage
+them, and finally, we're going to finish the project.
 
 </div>
 
 - ⇒ *Introduction*
-- Resource Management
-- Mutation and Borrowing
--
-
-TODO
+- Resource management
+- Mutation and borrowing
+- Putting it together
 
 # Interlude: Setup
 
@@ -59,11 +58,9 @@ in parallel and everyone is ready when we get to the first exercise soon.
 
 </div>
 
-TODO: fill out repo name
-
 ``` shell
-$ git clone https://github.com/huonw/...
-$ cd ...
+$ git clone https://github.com/huonw/rust-resource-management.git
+$ cd rust-resource-management
 ```
 
 ``` shell
@@ -212,11 +209,10 @@ TODO
 </div>
 
 - Introduction
-- ⇒ *Resource Management*
-- Mutation and Borrowing
--
+- ⇒ *Resource management*
+- Mutation and borrowing
+- Putting it together
 
-TODO
 
 
 # Resource Management: Good
@@ -671,12 +667,9 @@ This brings us to our next section.
 </div>
 
 - Introduction
-- Resource Management
-- ⇒ *Mutation and Borrowing*
--
-
-TODO
-
+- Resource management
+- ⇒ *Mutation and borrowing*
+- Putting it together
 
 # `&mut`: mutation XOR sharing
 
@@ -1130,12 +1123,29 @@ fn main() {
 }
 ```
 
+# Structure
+
+<div class="notes">
+
+No more talking, just coding.
+
+</div>
+
+- Introduction
+- Resource management
+- Mutation and borrowing
+- ⇒ *Putting it together*
+
 
 # Exercise
 
 <div class="notes">
 
-TODO
+Now we get on to the meat of this tutorial. Let's summarise a CSV
+file. This exercise is longer. First we'll get summarisation working
+on `data/example.csv`, then we'll support other files, look at the
+performance, make it testable, and then as extensions, improve the
+error handling and performance.
 
 </div>
 
@@ -1146,8 +1156,36 @@ Open
 Run using `cargo run --bin summarise-csv`.
 
 
-# Extensions
+# Extensions: Dependencies
 
 - parallelism: [docs.rs/rayon](https://docs.rs/rayon)
 - property testing: [docs.rs/proptest](https://docs.rs/proptest)
 - fuzzing: [github.com/rust-fuzz/cargo-fuzz](https://github.com/rust-fuzz/cargo-fuzz/)
+
+# Parallelism
+
+Add to `Cargo.toml`:
+
+``` rust
+`[dependencies]`
+rayon = "1.1.0"
+```
+
+[docs.rs/rayon/1.1.0/rayon/iter/index.html](https://docs.rs/rayon/1.1.0/rayon/iter/index.html)
+
+# Property Testing
+
+Add to `Cargo.toml`:
+
+``` rust
+[dependencies]
+proptest = "0.9.4"
+```
+
+# Fuzzing (Linux & macOS only)
+
+`rustup update nightly`, run `cargo +nightly install cargo-fuzz`.
+
+[rust-fuzz.github.io/book/cargo-fuzz.html](https://rust-fuzz.github.io/book/cargo-fuzz.html)
+
+Need to pull shared code into `src/lib.rs`, and made public `pub fn` and `pub struct`.

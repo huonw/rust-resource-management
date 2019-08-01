@@ -104,6 +104,10 @@ li::before {
     color: lightgray;
 }
 
+#nav-page-number::before {
+    content: "#";
+}
+
 img {
     display: block;
     margin: 0 auto;
