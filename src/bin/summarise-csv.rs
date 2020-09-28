@@ -23,7 +23,7 @@ We're going to start small, and expand:
    performance. There's an script `generate.py` in `data/` that
    generates some big files, run it in that folder. One of the files
    it generates is the `data/huge.csv` which is 180MB and 1 million
-   rows. To run our summarisation, try: `cargo run --release --example
+   rows. To run our summarisation, try: `cargo run --release --bin
    summarise-csv -- data/huge.csv`.  We've previously been compiling
    in debug mode, for faster compilation, but for performance work we
    should turn optimisations on, which is what `--release` does.
